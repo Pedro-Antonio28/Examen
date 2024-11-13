@@ -31,7 +31,7 @@ class DatabaseSeeder extends Seeder
                 Post::factory(10)->make()
             );
         });
-
+        $this->call(PostsSeeder::class);
         /*foreach ($users as $user) {
             $user->posts()->saveMany(
                 Post::factory(10)->make()
