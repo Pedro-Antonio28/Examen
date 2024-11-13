@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('posts', function (Blueprint $table) {
-            $table->string('summary', 50)->after('title');
-            $table->string('slug')->after('summary');
+            $table->string('summary', 50)->nullable()->after('title');
+            $table->string('slug')->nullable()->after('summary');
             $table->enum('status', ['published', 'draft', 'archived', 'pending'])->default('draft')->after('slug');
             $table->integer('reading_time')->unsigned()->nullable()->after('status');
         });

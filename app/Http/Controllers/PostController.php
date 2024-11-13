@@ -6,7 +6,7 @@ use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Str;
 class PostController extends Controller
 {
     public function __construct()
@@ -34,7 +34,17 @@ class PostController extends Controller
 
     public function store(StorePostRequest $request)
     {
-        auth()->user()->posts()->create($request->validated());
+        $slug = str::slug($request->title);
+
+        $post = auth()->user()->posts()->create([
+            'title' => $request->title,
+            'body' => $request->body,
+            'summary' => $request->summary,
+            'slug' => $slug,
+            'status' => $request->status,
+            'reading_time' => $request->reading_time,
+            'published_at' => $request->status == 'published'? now() : null,
+        ]);
 
         return to_route('posts.index')
             ->with('status', 'Post created successfully');
@@ -47,14 +57,30 @@ class PostController extends Controller
 
     public function update(UpdatePostRequest $request, Post $post)
     {
-        $post->update($request->validated());
+        if ($post->status == 'published' || $post->status == 'archived') {
+            return redirect()->route('posts.index')
+                ->with('error', 'You cannot edit this post because it is published or archived.');
+        }
+        $publishedAt = $request->status === 'published' ? now() : null;
 
-        return to_route('posts.show', $post)
-            ->with('status', 'Post updated successfully');
+
+        $post->update([
+            'title' => $request->title,
+            'body' => $request->body,
+            'summary' => $request->summary,
+            'slug' => Str::slug($request->title),
+            'status' => $request->status,
+            'reading_time' => $request->reading_time,
+            'published_at' => $publishedAt,
+        ]);
     }
 
     public function destroy(Post $post)
     {
+        if ($post->status != 'draft' && $post->status != 'pending') {
+            return redirect()->route('posts.index')
+                ->with('error', 'You can only delete posts that are in draft or pending status.');
+        }
         $post->delete();
 
         return to_route('posts.index')

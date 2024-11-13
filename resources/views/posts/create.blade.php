@@ -14,9 +14,37 @@
                     >
                         @include('posts.form-fields')
 
-                        <x-primary-button type="submit" class="mt-4">{{ __('Save') }}</x-primary-button>
-
                         @csrf
+
+
+
+
+                        <div>
+                            <label for="summary" class="block text-sm font-medium text-gray-700">Resumen</label>
+                            <textarea name="summary" id="summary" rows="3"
+                                      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">{{ old('summary') }}</textarea>
+                        </div>
+
+
+                        <div>
+                            <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                            <select name="status" id="status"
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>Publicado</option>
+                                <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
+                                <option value="archived" {{ old('status') == 'archived' ? 'selected' : '' }}>Archivado</option>
+                                <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>Pendiente</option>
+                            </select>
+                        </div>
+
+
+                        <div>
+                            <label for="reading_time" class="block text-sm font-medium text-gray-700">Tiempo de lectura (minutos)</label>
+                            <input type="number" name="reading_time" id="reading_time" value="{{ old('reading_time') }}"
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        </div>
+
+                        <x-primary-button type="submit" class="mt-4">{{ __('Save') }}</x-primary-button>
                     </form>
                 </div>
             </div>
